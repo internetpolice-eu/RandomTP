@@ -1,8 +1,9 @@
-name: RandomTP
-version: 2.3
-description: RandomTP
+name: ${project.artifactId}
+version: ${project.version}
+description: ${project.artifactId}
 main: backcab.RandomTP.RandomTP
 softdepend: [Towny,WorldGuard,Factions,WorldBorder,Vault]
+api-version: 1.14
 commands:
   randomtp:
     usage: /randomtp [player|portal|reload]

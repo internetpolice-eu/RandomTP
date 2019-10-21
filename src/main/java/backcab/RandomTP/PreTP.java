@@ -48,8 +48,8 @@ public class PreTP{
 	
 	private boolean validPosition(Location loc, boolean flying){
 		if ((this.config.getConfig().getBoolean("anticheat")) && (
-			(loc.getBlock().getType().equals(Material.STATIONARY_LAVA)) || 
-			(loc.getBlock().getType().equals(Material.STATIONARY_WATER)) || (
+			(loc.getBlock().getType().equals(Material.LAVA)) ||
+			(loc.getBlock().getType().equals(Material.WATER)) || (
 			(loc.subtract(0.0D, 1.0D, 0.0D).getBlock().getType().equals(Material.AIR)) && (!flying)))) {
 			return false;
 		}

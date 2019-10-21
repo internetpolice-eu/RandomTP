@@ -46,7 +46,6 @@ public class BuildTask implements Runnable{
 			Block b = new Location(this.world, this.x, this.y, z).getBlock();
 			if (b.getType().equals(this.old)){
 				b.setType(this.m, false);
-				b.setData(this.data);
 				b.getState().update(true, false);
 			}
 		}

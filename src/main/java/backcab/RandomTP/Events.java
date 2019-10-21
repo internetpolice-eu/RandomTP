@@ -39,7 +39,7 @@ public class Events implements Listener{
 			return;
 		}
 		Block b = event.getClickedBlock();
-		if ((!b.getType().equals(Material.SIGN_POST)) && (!b.getType().equals(Material.WALL_SIGN))) {
+		if ((!b.getType().equals(Material.OAK_SIGN)) && (!b.getType().equals(Material.OAK_WALL_SIGN))) {
 			return;
 		}
 		Sign s = (Sign)b.getState();
@@ -93,7 +93,7 @@ public class Events implements Listener{
    
 	@EventHandler
 	protected void onClick(PlayerInteractEvent event){
-		if (!event.getPlayer().getItemInHand().getType().equals(Material.WOOD_AXE)) {
+		if (!event.getPlayer().getItemInHand().getType().equals(Material.WOODEN_AXE)) {
 			return;
 		}
 		if (!this.rtp.checkPermission(event.getPlayer(), "randomtp.portal.make", null)) {
