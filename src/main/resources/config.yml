@@ -36,9 +36,17 @@ cmd:
 # BLACK LIST #
 ##############
 biomes:
-  - OCEAN
-  - RIVER
+  - COLD_OCEAN
+  - DEEP_COLD_OCEAN
+  - DEEP_FROZEN_OCEAN
+  - DEEP_LUKEWARM_OCEAN
   - DEEP_OCEAN
+  - DEEP_WARM_OCEAN
+  - FROZEN_OCEAN
+  - FROZEN_RIVER
+  - LUKEWARM_OCEAN
+  - OCEAN
+  - WARM_OCEAN
 blocks:
   - CACTUS
 
