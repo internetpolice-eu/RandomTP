@@ -6,7 +6,7 @@ cache:
   directories:
   - "$HOME/.m2"
 install:
-- mvn -nsu -Dtravis.buildNumber=${TRAVIS_BUILD_NUMBER} clean deploy
+- mvn -nsu -Dtravis.buildNumber=${TRAVIS_BUILD_NUMBER} -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 clean deploy
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_00cde41dc898_key -iv $encrypted_00cde41dc898_iv
   -in deploy_rsa.enc -out deploy_rsa -d
