@@ -26,10 +26,12 @@ public class RandomTP extends JavaPlugin{
         getCommand("randomtp").setExecutor(new TPCommand(this));
     }
 
+    @Deprecated
     protected void log(Level level, String message){
         getLogger().log(level, message);
     }
 
+    @Deprecated
     protected void file(String message) {
         if (!this.config.getConfig().getBoolean("debug")) {
             return;
@@ -49,6 +51,7 @@ public class RandomTP extends JavaPlugin{
         catch (IOException localIOException1) {}
     }
 
+    @Deprecated
     protected boolean checkPermission(CommandSender sender, String perm, String message) {
         if (!sender.hasPermission(perm)){
             file(sender.getName() + " does not have " + perm);

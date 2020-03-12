@@ -2,10 +2,20 @@ name: ${project.artifactId}
 version: ${project.version}
 description: ${project.artifactId}
 main: backcab.RandomTP.RandomTP
-softdepend: [Towny,WorldGuard,Factions,WorldBorder,Vault]
-api-version: 1.14
+softdepend: [WorldGuard,WorldBorder]
+api-version: 1.15
 commands:
   randomtp:
-    usage: /randomtp [player|portal|reload]
+    usage: /randomtp [player|reload]
     description: randomly teleports you or another player
     aliases: [rtp]
+permissions:
+  randomtp.tp:
+    description: Teleports the executing user to a random location on the map.
+    default: false
+  randomtp.other:
+    description: Teleports another user then the executing user to a random location on the map.
+    default: false
+  randomtp.reload:
+    description: Reloads the plugin configuration.
+    default: false
