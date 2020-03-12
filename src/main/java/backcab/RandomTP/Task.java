@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,19 +12,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.wimbli.WorldBorder.BorderData;
 import com.wimbli.WorldBorder.Config;
 
-public class Task
-        implements Runnable{
+public class Task implements Runnable {
     private boolean rand;
     private boolean message;
-    private boolean priceEnabled;
     private boolean cooldownEnabled;
-    private boolean usingTowny;
-    private boolean usingFactions;
     private boolean usingWG;
     private boolean usingWB;
     private List<String> worldList;
@@ -38,13 +30,12 @@ public class Task
     private int minX;
     private int minZ;
     private int cooldown;
-    private double price;
     private UUID id;
     private static HashMap<UUID, Integer> players;
     private static HashMap<UUID, Long> cooldowns;
     private static RandomTP rtp;
 
-    protected Task(boolean rand, List<String> worlds, int maxX, int maxZ, int minX, int minZ, boolean message, double price, int cooldown, boolean priceEnabled, boolean cooldownEnabled, List<String> biomes, List<String> blocks, UUID id, boolean usingTowny, boolean usingFactions, boolean usingWG, boolean usingWB){
+    protected Task(boolean rand, List<String> worlds, int maxX, int maxZ, int minX, int minZ, boolean message, int cooldown, boolean cooldownEnabled, List<String> biomes, List<String> blocks, UUID id, boolean usingWG, boolean usingWB){
         cancel(id);
 
         this.rand = rand;
@@ -54,15 +45,11 @@ public class Task
         this.minX = minX;
         this.minZ = minZ;
         this.message = message;
-        this.price = price;
         this.cooldown = cooldown;
-        this.priceEnabled = priceEnabled;
         this.cooldownEnabled = cooldownEnabled;
         this.biomes = biomes;
         this.blocks = blocks;
         this.id = id;
-        this.usingTowny = usingTowny;
-        this.usingFactions = usingFactions;
         this.usingWG = usingWG;
         this.usingWB = usingWB;
 
@@ -74,9 +61,7 @@ public class Task
                 "\n  min X: " + minX +
                 "\n  min Z: " + minZ +
                 "\n  message: " + message +
-                "\n price: " + price +
                 "\n cooldown: " + cooldown +
-                "\n priceEnabled: " + priceEnabled +
                 "\n cooldownEnabled: " + cooldownEnabled +
                 "\n biomes: " + biomes +
                 "\n blocks: " + blocks +
@@ -85,23 +70,24 @@ public class Task
     }
 
     protected static void init(RandomTP rtp){
-        players = new HashMap<UUID,Integer>();
-        cooldowns = new HashMap<UUID,Long>();
+        players = new HashMap<>();
+        cooldowns = new HashMap<>();
         Task.rtp = rtp;
     }
 
     protected void setID(int taskId){
-        players.put(this.id, Integer.valueOf(taskId));
+        players.put(this.id, taskId);
     }
 
     protected static void cancel(UUID uuid){
         if (players.containsKey(uuid)){
-            Bukkit.getScheduler().cancelTask(((Integer)players.get(uuid)).intValue());
+            Bukkit.getScheduler().cancelTask(players.get(uuid));
             players.remove(uuid);
         }
     }
 
-    public void run(){
+    @Override
+    public void run() {
         Player p = Bukkit.getServer().getPlayer(this.id);
 
         Location loc = findLocation(p.getWorld());
@@ -109,7 +95,7 @@ public class Task
             return;
         }
         if ((this.cooldownEnabled) && (cooldowns.containsKey(this.id))){
-            long time = System.currentTimeMillis() - ((Long)cooldowns.get(this.id)).longValue();
+            long time = System.currentTimeMillis() - cooldowns.get(this.id);
             int seconds = (int)(time / 1000.0D);
 
             rtp.file(p.getName() + ": time (s): " + seconds + "   " + time);
@@ -123,23 +109,9 @@ public class Task
                 return;
             }
         }
-        if ((Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")) && (this.priceEnabled) && (this.price != 0.0D)){
-            Economy econ = null;
-            RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp != null) {
-                econ = (Economy)rsp.getProvider();
-            }
-            EconomyResponse.ResponseType type = econ.withdrawPlayer(p, this.price).type;
-            if (!type.equals(EconomyResponse.ResponseType.SUCCESS)){
-                p.sendMessage(ChatColor.GOLD + "Not enough money. Random teleports cost $" + this.price);
-                rtp.file(p.getName() + " tried to teleport. Not enough money");
-                cancel(this.id);
-                return;
-            }
-        }
         if ((!rtp.checkPermission(p, "randomtp.cdexempt", null)) && (this.cooldown != 0) && (this.cooldownEnabled)){
             rtp.file("Adding cooldown for " + p.getName());
-            cooldowns.put(p.getUniqueId(), Long.valueOf(System.currentTimeMillis()));
+            cooldowns.put(p.getUniqueId(), System.currentTimeMillis());
         }
         loc.getChunk().load(true);
         if (this.message) {
@@ -152,16 +124,16 @@ public class Task
         players.remove(this.id);
     }
 
-    private Location findLocation(World w){
-        World world = null;
+    private Location findLocation(World w) {
+        World world;
         if (this.rand){
-            ArrayList<World> worlds = new ArrayList<World>();
+            ArrayList<World> worlds = new ArrayList<>();
             for (String sworld : this.worldList) {
                 if (!sworld.startsWith("$")) {
                     worlds.add(Bukkit.getServer().getWorld(sworld));
                 }
             }
-            world = (World)worlds.get((int)(Math.random() * worlds.size()));
+            world = worlds.get((int)(Math.random() * worlds.size()));
         }
         else{
             world = w;
@@ -199,7 +171,7 @@ public class Task
             b.getChunk().unload(true);
             return null;
         }
-        Location loc = b.getLocation().add(0.5D, 1.0D, 0.5D);
+        Location loc = b.getLocation().add(0.5D, 2.5D, 0.5D);
         if ((this.usingWB) && (Bukkit.getPluginManager().isPluginEnabled("WorldBorder"))){
             rtp.file("Checking if location is inside border");
             BorderData bd = Config.Border(world.getName());
@@ -219,13 +191,13 @@ public class Task
         return loc;
     }
 
-    private boolean claimCheck(Location loc){
+    private boolean claimCheck(Location loc) {
         PluginManager pm = rtp.getServer().getPluginManager();
         // TODO: Re-implement plugin hooks (at least WorldGuard + GriefPrevention)
         return false;
     }
 
-    private String getMessage(Location loc){
+    private String getMessage(Location loc) {
         Location spawn = loc.getWorld().getSpawnLocation();
         double x = loc.getX() - spawn.getX();
         double y = loc.getZ() - spawn.getZ();
@@ -267,6 +239,6 @@ public class Task
         } else if ((slope > 67.5D) && (slope <= 90.0D)) {
             direction = "North";
         }
-        return  ChatColor.GOLD + "You have been teleported " + ChatColor.RED + String.format("%.2f", new Object[] { Double.valueOf(distance) }) + " blocks " + direction + ChatColor.GOLD + " of " + ChatColor.RED + loc.getWorld().getName() + "'s" + ChatColor.GOLD + " spawn.";
+        return  ChatColor.GOLD + "You have been teleported " + ChatColor.RED + String.format("%.2f", new Object[] {distance}) + " blocks " + direction + ChatColor.GOLD + " of " + ChatColor.RED + loc.getWorld().getName() + "'s" + ChatColor.GOLD + " spawn.";
     }
 }

@@ -29,14 +29,6 @@
             <version>16.13.0</version>
         </dependency>
 
-        <!-- Vault API -->
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- WorldBorder -->
         <dependency>
             <groupId>com.wimbli.WorldBorder</groupId>
@@ -79,8 +71,12 @@
 
     <repositories>
         <repository>
+            <id>internetpolice.eu</id>
+            <url>https://maven.internetpolice.eu/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository> <!-- GriefPrevention, Vault API -->
             <id>jitpack.io</id>
@@ -93,10 +89,6 @@
         <repository> <!-- PaperLib -->
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>internetpolice.eu</id>
-            <url>https://maven.internetpolice.eu/</url>
         </repository>
     </repositories>
 

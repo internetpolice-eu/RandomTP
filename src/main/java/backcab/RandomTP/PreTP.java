@@ -11,11 +11,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class PreTP{
+public class PreTP {
     private RandomTP rtp;
     private PluginFile config;
 
-    protected void start(RandomTP rtp, Player p, TeleportType type){
+    protected void start(RandomTP rtp, Player p, TeleportType type) {
         this.rtp = rtp;
         this.config = rtp.config();
         if ((type.equals(TeleportType.SELF)) && (!validWorld(p.getWorld().getName()))){
@@ -31,11 +31,11 @@ public class PreTP{
         sendTP(type, p.getUniqueId());
     }
 
-    private boolean validWorld(String world){
+    private boolean validWorld(String world) {
         List<String> worlds = this.config.getConfig().getStringList("valid_worlds");
         for (int i = 0; i < worlds.size(); i++) {
-            if (((String)worlds.get(i)).startsWith("$")) {
-                worlds.set(i, ((String)worlds.get(i)).substring(1));
+            if ((worlds.get(i)).startsWith("$")) {
+                worlds.set(i, (worlds.get(i)).substring(1));
             }
         }
         this.rtp.file("valid worlds: " + worlds);
@@ -46,7 +46,7 @@ public class PreTP{
         return false;
     }
 
-    private boolean validPosition(Location loc, boolean flying){
+    private boolean validPosition(Location loc, boolean flying) {
         if ((this.config.getConfig().getBoolean("anticheat")) && (
                 (loc.getBlock().getType().equals(Material.LAVA)) ||
                         (loc.getBlock().getType().equals(Material.WATER)) || (
@@ -57,32 +57,28 @@ public class PreTP{
     }
 
     private void sendTP(TeleportType type, UUID uuid){
-        boolean rand = ((Boolean)parse("random_world", Boolean.FALSE, "Invalid value for random_world. Defaulting to false.")).booleanValue();
+        boolean rand = (Boolean) parse("random_world", Boolean.FALSE, "Invalid value for random_world. Defaulting to false.");
         List<String> worlds = this.config.getConfig().getStringList("valid_worlds");
 
-        int maxX = ((Integer)parse("radius.max_X", Integer.valueOf(1000), "Invalid value for max_X. Defaulting to 1000")).intValue();
-        int maxZ = ((Integer)parse("radius.max_Z", Integer.valueOf(1000), "Invalid value for max_Z. Defaulting to 1000")).intValue();
-        int minX = ((Integer)parse("radius.min_X", Integer.valueOf(0), "Invalid value for min_X. Defaulting to 0")).intValue();
-        int minZ = ((Integer)parse("radius.min_Z", Integer.valueOf(0), "Invalid value for min_Z. Defaulting to 0")).intValue();
+        int maxX = (Integer) parse("radius.max_X", 1000, "Invalid value for max_X. Defaulting to 1000");
+        int maxZ = (Integer) parse("radius.max_Z", 1000, "Invalid value for max_Z. Defaulting to 1000");
+        int minX = (Integer) parse("radius.min_X", 0, "Invalid value for min_X. Defaulting to 0");
+        int minZ = (Integer) parse("radius.min_Z", 0, "Invalid value for min_Z. Defaulting to 0");
 
-        boolean message = ((Boolean)parse("send_message_on_tp", Boolean.FALSE, "Invalid value for send_message_on_tp")).booleanValue();
+        boolean message = (Boolean) parse("send_message_on_tp", false, "Invalid value for send_message_on_tp");
 
-        double price = ((Double)parse("price", Double.valueOf(0.0D), "Invalid value for price. Defaulting to 0.0")).doubleValue();
-        int cooldown = ((Integer)parse("cooldown", Integer.valueOf(0), "Invalid value for cooldown. Defaulting to 0")).intValue();
+        int cooldown = (Integer) parse("cooldown", 0, "Invalid value for cooldown. Defaulting to 0");
 
         String section = type.toString().toLowerCase();
-        boolean priceEnabled = ((Boolean)parse(section + ".price", Boolean.FALSE, "Invalid value for " + section + ".price. Defaulting to false")).booleanValue();
-        boolean cooldownEnabled = ((Boolean)parse(section + ".cooldown", Boolean.FALSE, "Invalid value for " + section + ".cooldown. Defaulting to false")).booleanValue();
+        boolean cooldownEnabled = (Boolean) parse(section + ".cooldown", false, "Invalid value for " + section + ".cooldown. Defaulting to false");
 
         List<String> biomes = this.config.getConfig().getStringList("biomes");
         List<String> blocks = this.config.getConfig().getStringList("blocks");
 
-        boolean usingTowny = ((Boolean)parse("towny", Boolean.FALSE, "Invalid value for towny. Defaulting to false.")).booleanValue();
-        boolean usingFactions = ((Boolean)parse("factions", Boolean.FALSE, "Invalid value for factions. Defaulting to false.")).booleanValue();
-        boolean usingWG = ((Boolean)parse("worldguard", Boolean.FALSE, "Invalid value for worldguard. Defaulting to false.")).booleanValue();
-        boolean usingWB = ((Boolean)parse("worldborder", Boolean.FALSE, "Invalid value for worldborder. Defaulting to false.")).booleanValue();
+        boolean usingWG = (Boolean) parse("worldguard", false, "Invalid value for worldguard. Defaulting to false.");
+        boolean usingWB = (Boolean) parse("worldborder", false, "Invalid value for worldborder. Defaulting to false.");
 
-        Task t = new Task(rand, worlds, maxX, maxZ, minX, minZ, message, price, cooldown, priceEnabled, cooldownEnabled, biomes, blocks, uuid, usingTowny, usingFactions, usingWG, usingWB);
+        Task t = new Task(rand, worlds, maxX, maxZ, minX, minZ, message, cooldown, cooldownEnabled, biomes, blocks, uuid, usingWG, usingWB);
 
         int id = Bukkit.getScheduler().runTaskTimer(this.rtp, t, 0L, 1L).getTaskId();
 
@@ -92,24 +88,24 @@ public class PreTP{
     private Object parse(String s, Object o, String warning){
         String thing = this.config.getConfig().getString(s);
         try{
-            Integer i = Integer.valueOf(Integer.parseInt(thing));
+            Integer i = Integer.parseInt(thing);
             if ((o instanceof Integer)) {
                 return i;
             }
         }
         catch (Exception localException){
             try{
-                Double d = Double.valueOf(Double.parseDouble(thing));
+                Double d = Double.parseDouble(thing);
                 if ((o instanceof Double)) {
                     return d;
                 }
             }
             catch (Exception localException1){
                 if (thing.equalsIgnoreCase("true")) {
-                    return Boolean.valueOf(true);
+                    return true;
                 }
                 if (thing.equalsIgnoreCase("false")) {
-                    return Boolean.valueOf(false);
+                    return false;
                 }
                 this.rtp.log(Level.SEVERE, warning);
                 this.rtp.file(warning);
